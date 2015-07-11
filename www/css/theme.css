@@ -76,4 +76,7 @@ path {
     shape-rendering: crispEdges;
 }
 
-
+/*mapas*/
+#map { 
+  widh: 500px;
+  height: 600px; }
