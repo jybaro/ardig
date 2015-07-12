@@ -19,7 +19,7 @@
         <param name="android-package" value="org.apache.cordova.mediacapture.Capture" />
     </feature>
     <allow-intent href="market:*" />
-    <name>HackMapp</name>
+    <name>ARDIG</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>

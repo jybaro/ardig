@@ -670,7 +670,7 @@ db.bulkDocs([
                     //usuario.ultima_sesion_ubicacion = ubicacion;
                     //usuario.ultima_sesion_estacion = window.app.info.numero_estacion;
                     //usuario.intentos_clave_olvidada = 0;
-console.log('USUARIO ACTIVO 2');
+
 
                     /////////////////////////////////
                     // menu del usuario para su rol:
@@ -680,38 +680,38 @@ console.log('USUARIO ACTIVO 2');
                     if (usuario.rol == 'operador') {
                         p_display('menu_registro', true);
                     }
-console.log('USUARIO ACTIVO 3');
+
                     ///////////////////////
                     // pantalla de registro:
 
                     if (usuario.clave === window.md5(window.app.info.crypt_password + usuario.cedula) || usuario.clave === window.md5(window.app.info.crypt_password + usuario.celular)) {
-console.log('USUARIO ACTIVO 3.1');
+
                         p_cambio_clave('urgente');
                     } else {
-console.log('USUARIO ACTIVO 3.2');
+
                         //if (usuario.rol == 'operador') {
                             p_registro();
                         //}
                     }                            
-console.log('USUARIO ACTIVO 4');
+
                     db.put(usuario).then(function() {
                         ///////////////////////////////////////////
                         // registra usuario activo en el sistema:
-console.log('USUARIO ACTIVO 5');
+
 
                         //p_alerta('Usuario encontrado.');
                         //p_('usuario_msg').innerHTML = p_('usuario').value;
                         window.app.info.usuario = usuario;
                         
-console.log('USUARIO ACTIVO 6');
+
                         p_('form_usuario_id').value = usuario._id;
                         p_('form_usuario_nombre').value = usuario.nombre;
-                        p_('usuario_msg').innerHTML = p_('form_usuario_nombre').value;
-console.log('USUARIO ACTIVO 7');
+                        //p_('usuario_msg').innerHTML = p_('form_usuario_nombre').value;
+
                         p_('menu_usuario_nombre').innerHTML = usuario.nombre;
 
 
-console.log('USUARIO ACTIVO 8');
+
 
                         // comentados todos los console.log //console.log('metadata registrada de usuario logeado', usuario);
                     }).catch(function(err) {
@@ -916,6 +916,11 @@ console.log('XXX 5');
     $('#provincia').val('PICHINCHA');
     $('#provincia').data('combobox').refresh();
     $('#provincia').change();
+    
+    ///////////
+    // FOTO:
+    
+    p_('imagen1').src = "img/logo.png";
         
 
     /////////////////////////////////////////////////
@@ -1261,8 +1266,8 @@ function p_tomar_foto() {
     try{
     navigator.camera.getPicture(onSuccess, onFail, { 
         quality: 50,
-        targetWidth: 300,
-        targetHeight: 400,
+        targetWidth: 200,
+        targetHeight: 300,
         //destinationType: navigator.camera.DestinationType.FILE_URI,
         destinationType: navigator.camera.DestinationType.DATA_URL,
         correctOrientation: true
@@ -1328,6 +1333,7 @@ function p_generar_doc() {
 
         doc.creado = ahora;
         doc.modificado = ahora;
+        doc.organizacion_tipo_color = p_obtener_color_tipo_organizacion();
 
         //doc.creado_por = p_('usuario').value;
         //doc.modificado_por = p_('usuario').value;
@@ -1351,10 +1357,12 @@ function p_generar_doc() {
             
         });
         
-        var foto = (window.foto && window.foto[0]) ? window.foto[0] : '';
+        
+        console.log('WINDOW.FOTO', window.fotos)
+        var foto = (window.fotos && window.fotos[0]) ? window.fotos[0] : '';
         
         doc._attachments = {
-            'imagen.png' : {
+            'imagen1.png' : {
                 content_type: 'image/png',
                 data: foto
             }
@@ -1367,6 +1375,18 @@ function p_generar_doc() {
     window.global_fdatos.timestamp = +new Date();
     
     return doc;
+}
+
+function p_obtener_color_tipo_organizacion() {
+    
+    var nodo = p_('organizacion_tipo');
+    var color = 'gray';
+    
+    if (nodo.selectedIndex && nodo.selectedIndex >= 0) {
+        color = nodo.options[nodo.selectedIndex].getAttribute('color');
+    } 
+    
+    return color;
 }
 
 
@@ -1387,4 +1407,8 @@ function p_generar_indice_busqueda(text) {
       text = text.replace(/(_)$/g, '');
       text = text.replace(/^(_)/g, '');
       return text;
+}
+
+function p_cancelar_registro() {
+    p_inicio();
 }
