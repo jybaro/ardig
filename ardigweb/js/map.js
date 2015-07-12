@@ -43,8 +43,8 @@
 	    }
 	});
  
- 	db = new PouchDB('geo2');
-    /*db.sync('http://104.131.40.56:5984/hackmapp', {
+ 	db = new PouchDB('hackmapp');
+    db.sync('http://104.131.40.56:5984/hackmapp', {
         live: true,
         retry: true
     }).on('change', function (change) {
@@ -53,7 +53,7 @@
     }).on('denied', function (info) {
     }).on('complete', function (info) {
     }).on('error', function (err) {
-    });*/
+    });
     
     //Informacion de la base de datos
     /*db.info().then(function (info) {
@@ -108,18 +108,31 @@
  //L.marker([-0.2201, -78.5121], {draggable: true}).bindPopup('<b>Plaza de la Independencia</b><br>Esta plaza es el centro de la ciudad de Quito').addTo(map);
 var Escuela = L.layerGroup();
 var Colegio = L.layerGroup();
+var Organizacion = L.layerGroup();
 db.allDocs({
             include_docs : true,
-            startkey : '',
-            endkey : '\uffff'
+            startkey : 'formulario|',
+            endkey : 'formulario|\uffff',
+            attachments : true
         }).then(function(response) {
             response.rows.forEach(function(resp){
             	doc=resp.doc;
-            	//console.log(doc);
-            	var icono = 'phone';
-            	var tipo=doc.organizacion_tipo;
-            	L.marker([doc.latitud, doc.longitud], {icon: L.AwesomeMarkers.icon({icon: icono, prefix: 'fa', markerColor: 'darkblue'}) }).bindPopup('<b>'+doc.organizacion_nombre+'</b><br>'+doc.organizacion_tipo+'<br>'+doc.organizacion_mision).addTo(tipo=='Escuela'?Escuela:Colegio);            		
-            	
+            	console.log(doc);
+            	var color = doc.organizacion_tipo_color;
+            	var tipo = doc.organizacion_tipo;
+            	var imagen = doc._attachments['imagen1.png'].data;
+            	if(doc.latitud && doc.longitud)
+            	{
+            		imagen = imagen ? 'data:image/png;base64,'+imagen:'';
+            		var cap='';
+            		doc.capacitacion.forEach(function(resp){
+            			cap+='<li>'+resp+'</li>';
+            		});
+            		if(doc.capacitacion_otros)
+            		cap+='<ul><li>'+doc.capacitacion_otros+'</li></ul>';
+            		cap='<ul>'+cap+'</ul>';
+            		L.marker([doc.latitud, doc.longitud], {icon: L.AwesomeMarkers.icon({icon: 'building', prefix: 'fa', markerColor: color}) }).bindPopup('<b>'+doc.organizacion_tipo+': '+doc.organizacion_nombre+'</b><br>'+doc.organizacion_mision+'<br><img style="float:left;margin:0 5px 0 0" src="'+imagen+'"/><b>Historia:</b><br>'+doc.historia+'<br><b>Ubicación:</b> '+doc.barrio+' / '+doc.parroquia+' / '+doc.canton+' / '+doc.provincia+'<br><br><b>Representante:</b> '+doc.entrevistado_nombres+' '+doc.entrevistado_apellidos+'<br><b>'+doc.entrevistado_tipo_documento+':</b> '+doc.entrevistado_numero_documento+'<br><b>Teléfono:</b> '+doc.entrevistado_telefono+'<br><b>Correo electrónico:</b> '+doc.entrevistado_correo+'<br><br><b>Opiniones sobre el barrio:</b><br>'+doc.opiniones+'<br><b>Expectativas:</b><br>'+doc.expectativas+'<br><b>Problemas:</b><br>'+doc.problemas+'<br><b>Propuestas:</b><br>'+doc.propuestas+'<br><b>Organizaciones Relacionadas:</b><br>'+doc.organizacion_relacionadas+'<br><b>Necesidades de capacitación:</b><br>'+cap).addTo(tipo=='Escuela'?Escuela:Colegio);            		
+            	}
 				//console.log(a.length);
             });
         }).catch(function(err){
@@ -137,8 +150,8 @@ var calles  = L.tileLayer(mbUrl, {id: 'mapbox.streets',   attribution: mbAttr}),
 completo  = L.tileLayer(mbUrl, {id: '',   attribution: mbAttr});
 
 var map = L.map('map',{
-	 layers: [Colegio, Escuela]
-}).setView([-0.2201, -78.5121], 14);
+	 layers: [Colegio, Escuela, Organizacion]
+}).setView([-0.2201, -78.5121], 12);
 
 new StorageTileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {storage: db,
 //L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
