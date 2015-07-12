@@ -125,12 +125,14 @@ db.allDocs({
             	{
             		imagen = imagen ? 'data:image/png;base64,'+imagen:'';
             		var cap='';
-            		doc.capacitacion.forEach(function(resp){
-            			cap+='<li>'+resp+'</li>';
-            		});
-            		if(doc.capacitacion_otros)
-            		cap+='<ul><li>'+doc.capacitacion_otros+'</li></ul>';
-            		cap='<ul>'+cap+'</ul>';
+            		if(doc.capacitacion)
+	            	{	doc.capacitacion.forEach(function(resp){
+	            			cap+='<li>'+resp+'</li>';
+	            		});
+	            		if(doc.capacitacion_otros)
+	            		cap+='<ul><li>'+doc.capacitacion_otros+'</li></ul>';
+	            		cap='<ul>'+cap+'</ul>';
+	            	}
             		L.marker([doc.latitud, doc.longitud], {icon: L.AwesomeMarkers.icon({icon: 'building', prefix: 'fa', markerColor: color}) }).bindPopup('<b>'+doc.organizacion_tipo+': '+doc.organizacion_nombre+'</b><br>'+doc.organizacion_mision+'<br><img style="float:left;margin:0 5px 0 0" src="'+imagen+'"/><b>Historia:</b><br>'+doc.historia+'<br><b>Ubicación:</b> '+doc.barrio+' / '+doc.parroquia+' / '+doc.canton+' / '+doc.provincia+'<br><br><b>Representante:</b> '+doc.entrevistado_nombres+' '+doc.entrevistado_apellidos+'<br><b>'+doc.entrevistado_tipo_documento+':</b> '+doc.entrevistado_numero_documento+'<br><b>Teléfono:</b> '+doc.entrevistado_telefono+'<br><b>Correo electrónico:</b> '+doc.entrevistado_correo+'<br><br><b>Opiniones sobre el barrio:</b><br>'+doc.opiniones+'<br><b>Expectativas:</b><br>'+doc.expectativas+'<br><b>Problemas:</b><br>'+doc.problemas+'<br><b>Propuestas:</b><br>'+doc.propuestas+'<br><b>Organizaciones Relacionadas:</b><br>'+doc.organizacion_relacionadas+'<br><b>Necesidades de capacitación:</b><br>'+cap).addTo(tipo=='Escuela'?Escuela:Colegio);            		
             	}
 				//console.log(a.length);
@@ -146,7 +148,7 @@ mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.ey
 
 
 
-var calles  = L.tileLayer(mbUrl, {id: 'mapbox.streets',   attribution: mbAttr}),
+var calles  = L.tileLayer(mbUrl, {id: 'mapbox.streets'}),
 completo  = L.tileLayer(mbUrl, {id: '',   attribution: mbAttr});
 
 var map = L.map('map',{
