@@ -1,6 +1,6 @@
 # ARDIG
 
-Aplicativo para el Registro y Despliegue de Información Georeferenciada.
+Hybrid app for registry and display of geo-referenced data.
 
-Hackatón HackMapp de Infodesarrollo.
+Second place in Infodesarrollo hackathon "HackMapp".
 
